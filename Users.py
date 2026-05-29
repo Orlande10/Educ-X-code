@@ -115,7 +115,7 @@ class Utilisateur:
              print("\n" + "=" * 45)
              print(f"   TABLEAU DE BORD -{self.nom.upper()}")
              print("=" * 45)
-             print(f"   Niveau     : {self.__niveasu}")
+             print(f"   Niveau     : {self.__niveau}")
              print(f" XP total     : {self.__xp} XP")
              print(f"Streak        : {self.__streak_jours} jour(s)")
              print("-" * 45)
