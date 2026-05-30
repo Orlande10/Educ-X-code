@@ -1,0 +1,17 @@
+{
+    "questions": [
+        {
+            "question": "",
+            "answer": ""
+        },
+        {
+            "question": "",
+            "answer": "" 
+        }
+    ],
+    "user": {
+        "name": "",
+        "score": 0,
+        "history": []
+    }
+}
