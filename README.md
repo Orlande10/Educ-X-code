@@ -55,7 +55,7 @@ python main.py
 ## 👥 Authors
 - **NAMOANO Y Nelly Orlande** (https://github.com/Orlande10)
 - **NANGA Estelle** (https://github.com/estellenanga)
-- **MAKERI Mahamadi** (https://github.com/MAKERI MAHAMADI)
+- **MAKERI Mahamadi** (https://github.com/MAKERIMAHAMADI)
 - **NABI Bassiratou** (https://github.com/bassiratounabi8-png)
 - **NAMENA Doriane** (https://github.com/namenDorian )
 - **NAON Lydie** (https://github.com/lydienaon)
