@@ -1,105 +1,104 @@
 class SessionQuiz:
     """
-    Gere une session interactive de quiz dans le terminal.
-    recoit une liste de questions et un objet utilisateur.
+     Manages an interactive quiz session in the terminal.
+    Receives a list of questions and a user object.
     """
     
-    def ___init___(self, questions: list, utilisateur):
+    def ___init___(self, questions: list, user):
         """
-        Initialise la session avec les questions selectionnees et l,utilisateur qui joue.
-        
-        :param questions: liste d,objets Question (QCM, Vrai/Faux, ReponseCourte)
-        :param utilisateur: object Utilisateur (depuis users.py)
+       Initializes the session with the selected questions and the playing user
+        :param questions: list of Questions object (MCQ, True/False, ShortAnswer)
+        :param user: User object (from Users.py)
         """
         self.questions = questions
-        self.utilisateur = utilisateur
+        self.user = user
         self.score = 0
         self.total = len(questions)
         self.resultats = []
         
-    def afficher_entete(self):
-        """Affiche un en-tete de bienvenue pour la session."""
+    def display_entete(self):
+        """"Displays a welcome header for the session."""
         print("=" * 50)
-        print(f"  Bienvenue, {self.utilisateur.nom} !")
-        print(f" Niveau : {self.utilisateur.niveau} | XP : {self.utilisateur.xp}")
-        print(f" Nombre de questions : {self.total}")
+        print(f"  WElcome, {self.user.nom} !")
+        print(f" Level : {self.user.level} | XP : {self.user.xp}")
+        print(f" Number of questions : {self.total}")
         print("=" * 50)
         print()
         
-    def poser_question(self, question, numero: int) -> bool:
+    def ask_question(self, question, number: int) -> bool:
         """
-        Afficher une question et recupere la reponse de l,utilisateur.
-        Retourne True si la reponseest correcte, False sinon.
+         Displays a question and retrieves the user's answer.
+        Returns True if the answer is correct, False otherwise.
         
         :param question: objet Question
-        :param numero: numero de la dans la session
+        :param number: question number in the session
         """
-        print(f"Question {numero}/{self.total} : {question.texte}")
+        print(f"Question {number}/{self.total} : {question.texte}")
         print(f" Difficulte : {question.difficulte}")
         
-        if hasattr(question, 'choix'):
-            for i, choix in enumerate(question.choix, star=1):
-                print(f"    {i}. {choix}")
+        if hasattr(question, 'choice'):
+            for i, choice in enumerate(question.choice, star=1):
+                print(f"    {i}. {choice}")
                 
         try:
-            reponse = input("Votre reponse : ").strip()
+            answer = input("your answer : ").strip()
         except (EOFError, KeyboardInterrupt):
-            print("\nSaisie interrompue.")
-            reponse = ""
+            print("\nInput interrupted.")
+            answer = ""
             
-            correct = question.verifier_reponse(reponse)
+            correct = question.verified_answer(answer)
             
             
         if correct:
-            print(f" ✔ Bonne reponse ! +XP")
+            print(f" ✔ Good answer ! +XP")
         else:
-            print(f" ✖ Mauvaise reponse. "
-                  f"La bonne reponse etait : {question.reponse_correcte}")
+            print(f" ✖ Bad answer. "
+                  f"the good answer was: {question.answer_correct}")
             print()
             
             return correct
         
-    def lancer(self):
+    def throw(self):
         """
-        Boucle principale de la session de quiz.
-        Parcourt toutes les questions et met a jour le score.
+      Main loop of the quiz session.
+Iterates through all questions and updates the score. .
         """
-        self.afficher_entete()
+        self.display_entete()
         
-        numero =  1
-        while numero <= self.total:
-            question = self.questions[numero - 1]
-            correct = self.poser_question(question, numero)
+        number =  1
+        while number <= self.total:
+            question = self.questions[number - 1]
+            correct = self.ask_question(question, number)
             
             if correct:
                 self.score += 1
-                xp_gagne = 10 * question.difficulte
-                self.utilisateur.ajouter_xp(xp_gagne)
+                xp_win = 10 * question.difficulte
+                self.user.add_xp(xp_win)
                 
             self.resultats.append({
                 "question": question.texte,
                 "correct": correct
             })
             
-            numero += 1
+            number += 1
             
-            self.afficher_bilan()
-        def afficher_bilan(self):
-            """Afficher le resume de fin de session."""
+            self.display_result()
+        def display_result(self):
+            """display the summary of session end."""
             print("=" * 50)
-            print("             FIN DE LA SESSION")
+            print("             END OF SESSION")
             print("f" * 50)
-            print(f"  Joueur  : {self.utilisateur.nom}")
+            print(f"  player  : {self.user.name}")
             print(f"  Score   : {self.score}/{self.total}")
             
-            pourcentage = (self.score / self.total * 100) if self.total > 0 else 0
-            print(f"   Reussite: {pourcentage:.1f}%")
-            print(f"   XP total: {self.utilisateur.xp}")
-            print(f"   Niveau  : {self.utilisateur.niveau}")
+            percentage = (self.score / self.total * 100) if self.total > 0 else 0
+            print(f"   Success: {percentage:.1f}%")
+            print(f"   XP total: {self.user.xp}")
+            print(f"   Level  : {self.user.level}")
             print("=" * 50)
             
-            self.utilisateur.mettre_a_jour_streak()
-            print(f"  Streak : {self.utilisateur.streak_jours}")
+            self.user.update_streak()
+            print(f"  Streak : {self.user.streak_days}")
             print()   
                      
                     
