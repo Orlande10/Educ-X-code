@@ -1,0 +1,49 @@
+{
+  "questions": [
+    {
+      "question": "What is the capital of France?",
+      "answer": "Paris"
+    },
+    {
+      "question": "How much is 7 x 8?",
+      "answer": "56"
+    },
+    {
+      "question": "What is the chemical symbol for water?",
+      "answer": "H2O"
+    },
+    {
+      "question": "In what year did the French Revolution begin?",
+      "answer": "1789"
+    },
+    {
+      "question": "What is the largest ocean in the world?",
+      "answer": "Pacific"
+    },
+    {
+      "question": "How many sides does a hexagon have?",
+      "answer": "6"
+    },
+    {
+      "question": "What programming language is used in this project?",
+      "answer": "Python"
+    },
+    {
+      "question": "Who painted the Mona Lisa?",
+      "answer": "Leonardo da Vinci"
+    },
+    {
+      "question": "Which planet is closest to the Sun?",
+      "answer": "Mercury"
+    },
+    {
+      "question": "How much is 15 + 27?",
+      "answer": "42"
+    }
+  ],
+  "user": {
+    "name": "",
+    "score": 0,
+    "history": [0, 0, 0, 0, 0]
+  }
+}
