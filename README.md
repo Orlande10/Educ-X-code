@@ -52,11 +52,17 @@ pip install -r requirements.txt
 python main.py
 ```
 ## Member contribution
+
 Orlande contributed to the project by writting the project README, making power point presentation and coding main.py, the entry point of the application that assembles all the modules together.
+
 Bassira contributed to the project by coding specialiste poo.py, the foundation file that defines the Question objects used in the quizzes.
+
 Doriane contributed to the project by coding users.py, the module that manages user profiles including XP, levels, and streaks.
+
 Lydie contributed to the project by coding storage.py, the module responsible for reading and writing data.json file.
+
 Estelle contributed to the project by coding engine.py, the core of the application that handles the quiz loop and game logic.
+
 Mahamadi contributed to the project by assembly all codage files in fullfile.py and coding utils.py, the module containing the spaced repetition algorithm that selects questions based on the user's history.
 
 ## 👥 Authors
