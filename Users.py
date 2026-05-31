@@ -1,51 +1,50 @@
-#===========================================================================
-# Users.py - User Profile and Progress Management
-# Project: Educ X | Author: Doriane | Module: User & Progress
-#===========================================================================
+"""
+users.py
+Defines the User and PremiumUser classes.
+Manages player profiles, XP, levels, streaks, and score history by subject.
+Demonstrates encapsulation, inheritance, and polymorphism.
+"""
 
-
-#----Import----
 from datetime import date, timedelta
 
-#----Constants----
+# XP thresholds required to reach each level (index = level - 1)
 LEVEL_THRESHOLDS: tuple = (0, 100, 250, 500, 1000, 2000, 5000)
 
+# XP awarded per question depending on its difficulty tag
 XP_BY_DIFFICULTY: dict = {
-    "easy": 10,
+    "easy":   10,
     "medium": 20,
-    "hard": 35,
+    "hard":   35,
 }
 
+# The highest level a user can reach
 MAX_LEVEL: int = len(LEVEL_THRESHOLDS) - 1
 
-#==========================================================================
-#CLASS: User
-#==========================================================================
 
 class User:
     """
     Represents a student using the Educ X application.
-    Manages the profile, experience points (XP), level,
-    consecutive-day streak, and score history by subject.
+    Manages profile data, experience points (XP), level progression,
+    daily streak tracking, and score history by subject.
+    Encapsulation is applied: all progress data is stored as private attributes
+    and accessed through getter methods.
     """
 
     def __init__(self, name: str) -> None:
         """
-        Initializes a new user.
+        Initialises a new User with default values.
 
         Args:
-        name(str): The user's name.
+            name (str): The student's display name.
         """
         self.name: str = name
-        self.__xp: int = 0                  # Encapsulation: private attribute
-        self.__level: int = 1
-        self.__streak_days: int = 0
-        self.__last_login: date = date.today()
+        self.__xp: int = 0                       # total XP points earned
+        self.__level: int = 1                    # starts at level 1
+        self.__streak_days: int = 0              # consecutive login days
+        self.__last_login: date = date.today()   # used to track streak
+        self.__score_history: dict = {}          # { subject: [score1, score2, ...] }
 
-        # Dictionary: subject -> list of scores (history)
-        self.__score_history: dict = {}
-
-        #---Getters (Abstraction: controlled access to private data)---
+    # --- Getters: controlled access to private data (Abstraction) ---
 
     def get_xp(self) -> int:
         """Returns the user's total XP points."""
@@ -60,111 +59,104 @@ class User:
         return self.__streak_days
 
     def get_history(self) -> dict:
-        """Returns the complete score history by subject."""
+        """Returns the full score history dictionary, keyed by subject."""
         return self.__score_history
 
-    #---Main Methods---
+    # --- Core methods ---
 
     def add_xp(self, points: int) -> None:
         """
-        Adds XP points to the user and checks whether a new level is reached.
+        Awards XP points to the user and triggers a level check.
 
         Args:
-            points(int): The number of XP points to add.
+            points (int): Number of XP points to add. Must be non-negative.
         """
         if points < 0:
             print("Error: XP points cannot be negative.")
             return
-
         self.__xp += points
         print(f"+{points} XP earned! Total: {self.__xp} XP")
         self.__check_level()
 
     def update_streak(self) -> None:
         """
-        Updates the consecutive study-day streak.
-
-        If the user logs in the day after their last login,
-        the streak increases. Otherwise, it is reset to 1.
+        Updates the daily study streak based on the last login date.
+        Logging in the day after the last login increases the streak.
+        Any longer gap resets it to 1.
         """
         today: date = date.today()
         yesterday: date = today - timedelta(days=1)
 
         if self.__last_login == yesterday:
             self.__streak_days += 1
-            print(f"🔥Streak maintained: {self.__streak_days} consecutive day(s)!")
+            print(f"Streak maintained: {self.__streak_days} consecutive day(s)!")
         elif self.__last_login < yesterday:
+            # More than one day has passed, streak is broken
             self.__streak_days = 1
-            print("🔥Streak reset. New start: 1 day.")
+            print("Streak reset. New start: 1 day.")
         else:
-            # Same-day login, nothing to do
+            # Already logged in today
             print("Streak already updated today.")
 
         self.__last_login = today
 
     def record_score(self, subject: str, score: int) -> None:
         """
-        Records a score for a given subject in the history.
+        Records a quiz score for a given subject.
 
         Args:
-        subject(str): The subject name (e.g. Mathematics).
-        score(int): The score obtained (between 0 and 100).
+            subject (str): The subject name, e.g. "Mathematics".
+            score (int): The score to record, typically between 0 and 100.
         """
         if subject not in self.__score_history:
             self.__score_history[subject] = []
-
         self.__score_history[subject].append(score)
         print(f"Score recorded: {score}/100 in {subject}.")
 
     def display_dashboard(self) -> None:
         """
-        Displays the complete user dashboard:
-        level, XP, streak, and subject averages.
+        Prints a summary dashboard showing the user's level, XP,
+        streak, and average scores per subject.
         """
         print("\n" + "=" * 45)
         print(f"   DASHBOARD - {self.name.upper()}")
         print("=" * 45)
         print(f"   Level      : {self.__level}")
-        print(f" Total XP     : {self.__xp} XP")
-        print(f" Streak       : {self.__streak_days} day(s)")
+        print(f"   Total XP   : {self.__xp} XP")
+        print(f"   Streak     : {self.__streak_days} day(s)")
         print("-" * 45)
 
         if not self.__score_history:
-            print("No quiz sessions recorded.")
+            print("   No quiz sessions recorded yet.")
         else:
-            print("Performance by subject:")
+            print("   Performance by subject:")
             for subject, scores in self.__score_history.items():
                 average: float = sum(scores) / len(scores)
-                print(
-                    f" - {subject:<20} Avg: {average:.1f}/100 ({len(scores)} session(s))"
-                )
+                print(f"   - {subject:<20} Avg: {average:.1f}/100 ({len(scores)} session(s))")
 
         print("=" * 45 + "\n")
 
     def identify_weak_points(self) -> list:
         """
-        Identifies subjects whose average score is below 50/100.
+        Finds subjects where the user's average score is below 50.
 
         Returns:
-        list: A list of tuples (subject, average) representing weak points.
+            list: A list of tuples (subject, average) for weak subjects.
         """
         weak_points: list = []
-
         for subject, scores in self.__score_history.items():
             average: float = sum(scores) / len(scores)
-
             if average < 50:
-                            # Immutable tuples (subject, rounded average)
-                            weak_points.append((subject, round(average, 1)))
-
+                # Store as an immutable tuple: (subject name, rounded average)
+                weak_points.append((subject, round(average, 1)))
         return weak_points
 
     def to_dict(self) -> dict:
         """
-        Converts the user profile into a dictionary for JSON storage.
+        Converts the user profile into a serialisable dictionary for JSON storage.
 
         Returns:
-        dict: Serializable representation of the user profile.
+            dict: All user data in a JSON-compatible format.
         """
         return {
             "name": self.name,
@@ -178,140 +170,78 @@ class User:
     @classmethod
     def from_dict(cls, data: dict) -> "User":
         """
-        Reconstructs a user object from a dictionary containing profile data.
+        Reconstructs a User object from a saved dictionary.
+
+        Args:
+            data (dict): Dictionary as loaded from the JSON file.
 
         Returns:
-        User: The reconstructed user object.
+            User: A fully restored User instance.
         """
         user = cls(data["name"])
-        user.User__xp = data.get("xp", 0)
-        user.User__level = data.get("level", 1)
-        user.User__streak_days = data.get("streak_days", 0)
-        user.User__score_history = data.get("score_history", {})
-
+        user._User__xp = data.get("xp", 0)
+        user._User__level = data.get("level", 1)
+        user._User__streak_days = data.get("streak_days", 0)
+        user._User__score_history = data.get("score_history", {})
         last_login = data.get("last_login", str(date.today()))
-        user.User__last_login = date.fromisoformat(last_login)
-
+        user._User__last_login = date.fromisoformat(last_login)
         return user
-
-    #---Private Method (Abstraction)---
 
     def __check_level(self) -> None:
         """
-        Checks whether the user has reached a new level based on XP.
-        Private method automatically called after each XP addition.
+        Checks whether the current XP total qualifies for a higher level.
+        Called automatically after every XP award.
         """
+        new_level: int = 1
         for i, threshold in enumerate(LEVEL_THRESHOLDS):
             if self.__xp >= threshold:
-                new_level: int = i + 1
+                new_level = i + 1
             else:
-                break
+                break  # stop as soon as we fall below a threshold
 
         new_level = min(new_level, MAX_LEVEL)
 
         if new_level > self.__level:
             self.__level = new_level
-            print(f"🎉 LEVEL UP! You are now level {self.__level}!")
+            print(f" LEVEL UP! You are now level {self.__level}!")
 
     def __str__(self) -> str:
-        """
-        Returns a readable representation of the user.
-        """
-        return (
-            f"User(name={self.name}, "
-            f"level={self.__level}, xp={self.__xp})"
-        )
+        """Returns a human-readable summary of the user."""
+        return f"User(name={self.name}, level={self.__level}, xp={self.__xp})"
 
-
-#========================================================================================
-#CHILD CLASS: PremiumUser (Inheritance + Polymorphism)
-#========================================================================================
 
 class PremiumUser(User):
     """
-    Premium version of a user with an XP multiplier.
-
-    Inherits from User and overrides the add_xp()
-    method to apply a bonus (polymorphism).
+    A premium student who earns 50% more XP per correct answer.
+    Inherits all behaviour from User and overrides add_xp() to apply the bonus.
+    Demonstrates inheritance and polymorphism: same method name, different behaviour.
     """
 
-    XP_MULTIPLIER: float = 1.5
+    XP_MULTIPLIER: float = 1.5  # premium users earn 1.5x XP
 
     def __init__(self, name: str, subscription: str) -> None:
         """
-        Initializes a premium user.
+        Initialises a PremiumUser.
 
         Args:
-        name(str): The user's name.
-        subscription(str): Subscription type (e.g. "monthly", "yearly").
+            name (str): The student's display name.
+            subscription (str): Subscription type, e.g. "monthly" or "yearly".
         """
         super().__init__(name)
         self.subscription: str = subscription
 
     def add_xp(self, points: int) -> None:
         """
-        Adds XP with a 50% bonus compared to a standard user.
-
-        Overrides the parent method (polymorphism).
+        Awards XP with a 50% bonus applied before calling the parent method.
+        Overrides User.add_xp() — this is polymorphism in action.
 
         Args:
-        points(int): Base XP points to add.
+            points (int): Base XP points before the premium multiplier is applied.
         """
         bonus_points: int = int(points * self.XP_MULTIPLIER)
-
-        print(
-            f"[Premium] XP bonus applied: "
-            f"{points} -> {bonus_points} XP"
-        )
-
+        print(f"[Premium] XP bonus applied: {points} -> {bonus_points} XP")
         super().add_xp(bonus_points)
 
     def __str__(self) -> str:
-        """
-        Returns a readable representation of the premium user.
-        """
-        return (
-            f"PremiumUser("
-            f"name={self.name}, "
-            f"subscription={self.subscription})"
-        )
-
-
-#==================================================================================
-#QUICK TEST (Remove or comment out before final submission)
-#==================================================================================
-
-"""
-if __name__ == "__main__":
-
-    # Creation of two distinct objects (required by the project brief)
-    student1 = User("Doriane")
-    student2 = PremiumUser("Nelly", "monthly")
-
-    # Method tests
-    student1.update_streak()
-    student1.add_xp(120)
-
-    student1.record_score("Mathematics", 72)
-    student1.record_score("Computer Science", 45)
-    student1.record_score("Mathematics", 38)
-
-    student1.display_dashboard()
-
-    # Weak point identification
-    weak_points: list = student1.identify_weak_points()
-
-    if weak_points:
-        print("Weak points detected:")
-
-        for subject, average in weak_points:
-            print(f"   - {subject}: {average}/100")
-
-    print()
-
-    # Polymorphism test
-    student2.add_xp(100)
-    print(student2)
-"""    
-    
-    
+        """Returns a human-readable summary of the premium user."""
+        return f"PremiumUser(name={self.name}, subscription={self.subscription})"
